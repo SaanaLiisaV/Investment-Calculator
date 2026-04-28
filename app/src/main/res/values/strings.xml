@@ -1,3 +1,12 @@
 <resources>
-    <string name="app_name">InvestmentCalculator</string>
+    <string name="app_name">Sijoituslaskuri</string>
+    <string name="initial_amount">Initial investment: </string>
+    <string name="investment_years">Investment period (years): </string>
+    <string name="monthly_contribution">Monthly contribution: </string>
+    <string name="annual_interestrate">Annual interest rate: </string>
+    <string name="total_invested">Total invested: </string>
+    <string name="total_return">Total return: </string>
+    <string name="final_value">Final value: </string>
+    <string name="investment_info">Investment info: </string>
+    <string name="total_results">Total results: </string>
 </resources>
