@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -44,9 +47,9 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun ReactiveInvestmentValueUI() {
 
+    //localized texts from strings.xml
     val investmentInfoText = stringResource(R.string.investment_info)
     val resultsText = stringResource(R.string.total_results)
-
     val initialAmountText = stringResource(R.string.initial_amount)
     val monthlyContributionText = stringResource(R.string.monthly_contribution)
     val annualInterestRateText = stringResource(R.string.annual_interestrate)
@@ -57,7 +60,7 @@ fun ReactiveInvestmentValueUI() {
     val finalValueText = stringResource(R.string.final_value)
 
 
-    //käyttäjän syötteet
+    //user input values
     var stringValueInitialAmount by remember { mutableStateOf("0")}
     var stringValueInterestRate by remember { mutableStateOf("0")}
     var stringValueMonthlyContribution by remember { mutableStateOf("0")}
@@ -66,20 +69,12 @@ fun ReactiveInvestmentValueUI() {
     var resultText by remember { mutableStateOf("")}
 
     fun updateValues(){
-
-        //Tänne päädytään, kun käyttäjä muuttaa arvoja
+        //this function is called every time user changes a value
 
         var investmentYears = sliderPosition.toInt()
         var initialAmount = stringValueInitialAmount.toDoubleOrNull() ?: 0.0
         var monthlyContribution = stringValueMonthlyContribution.toDoubleOrNull() ?: 0.0
         val annualInterestRate = (stringValueInterestRate.toDoubleOrNull() ?: 0.0) / 100.0
-
-        //TÄMÄ TOIMII KUN ON PELKKÄ PÄÄOMA:
-        //val finalValue = initialAmount * Math.pow((1 + annualInterestRate).toDouble(), investmentYears.toDouble())
-        //val totalReturn = finalValue - initialAmount
-
-
-        //TÄÄLLÄ LISÄTÄÄN KUUKAUSITTAINEN SIJOITUS + LASKUT:
 
         val monthlyInterestRate = annualInterestRate / 12
 
@@ -87,22 +82,21 @@ fun ReactiveInvestmentValueUI() {
 
         val totalMonths = investmentYears * 12
 
-        //iteroidaan jokainen kuukausi yksi kerrallaan
+        //loop goes through every month one by one
         for (i in 1..totalMonths) {
 
-            //kuukausittainen saasto
+            //add monthly contribution
             finalValue = finalValue + monthlyContribution
-            //lisataan korko
+            //add interest growth for this month
             finalValue = finalValue * (1 + monthlyInterestRate)
 
         }
-        //oma alkupääoma + kuukausisäästö × 12 × sijoitusvuodet
+        //how much money user invested in total
         val totalInvested = initialAmount + (monthlyContribution * totalMonths)
 
-        //tuotto/korko = loppusumma - sijoitettu yhteensä
         val totalReturn = finalValue - totalInvested
 
-        //haetaan lokalisoidut merkkijonot, muotoillaan luettaviksi
+        //Creating the result text using localized strings
         resultText = "$investmentInfoText\n"
         resultText += "$initialAmountText $initialAmount\n"
         resultText += "$monthlyContributionText $monthlyContribution\n"
@@ -115,18 +109,42 @@ fun ReactiveInvestmentValueUI() {
         resultText += "$totalReturnText ${"%.2f".format(totalReturn)} \n"
 
     }
+        //layout
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
+                start = 20.dp,
+                end = 20.dp,
+                top = 80.dp,
+                bottom = 10.dp
+        ),
 
-    Spacer(modifier=Modifier.fillMaxSize(0.2f))
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
 
-    Text(text=resultText)
-    Spacer(modifier=Modifier.fillMaxSize(0.2f))
+            //Investment calculator -title
+            Text(
+                text = stringResource(R.string.investment_calculator),
+                style = MaterialTheme.typography.headlineMedium
+            )
+            //result box
+            Card(
+                modifier = Modifier.fillMaxWidth()
+            ) {
 
-    //ALKUPÄÄOMA
+                Text(
+                    text = resultText,
+                    modifier = Modifier.padding(12.dp)
+                )
+            }
+
+    //Initial amount
     TextField(
         value = stringValueInitialAmount,
         onValueChange = {
-            stringValueInitialAmount = it
-            updateValues() //tämä kutsuu funtiota, joka laskee uudelleen kun arvot muuttuu
+            stringValueInitialAmount = it //Save new value
+            updateValues() //Recalculate when value changes
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         label = {
@@ -135,14 +153,12 @@ fun ReactiveInvestmentValueUI() {
         modifier=Modifier.fillMaxWidth()
     )
 
-    Spacer(modifier=Modifier.fillMaxSize(0.2f))
-
-    //KUUKAUSITTAINEN SIJOITUS
+    //Monthly contribution
     TextField(
      value = stringValueMonthlyContribution,
      onValueChange = {
          stringValueMonthlyContribution = it
-        updateValues() //tämä kutsuu funtiota, joka laskee uudelleen kun arvot muuttuu
+        updateValues()
      },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         label = {
@@ -151,14 +167,12 @@ fun ReactiveInvestmentValueUI() {
      modifier=Modifier.fillMaxWidth()
     )
 
-    Spacer(modifier=Modifier.fillMaxSize(0.2f))
-
-    //KORKOPROSENTTI
+    //Annual interest rate
     TextField(
         value = stringValueInterestRate,
         onValueChange = {
             stringValueInterestRate = it
-            updateValues() //tämä kutsuu funtiota, joka laskee uudelleen kun arvot muuttuu
+            updateValues() //Recalculate when value changes
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         label = {
@@ -166,9 +180,7 @@ fun ReactiveInvestmentValueUI() {
         },
         modifier=Modifier.fillMaxWidth()
     )
-
-    Spacer(modifier=Modifier.fillMaxSize(0.2f))
-
+    //Box is used to center the slider label
     Box(
         modifier = Modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center,
@@ -177,17 +189,17 @@ fun ReactiveInvestmentValueUI() {
     //currently selected investment years
     { Text("$investmentYearsText ${sliderPosition.toInt()}") }
 
-    //SLIDER MÄÄRITTÄMÄÄN AIKA VUOSINA
+    //Slider for selecting investment duration (in years)
     Slider(
         value=sliderPosition,
         onValueChange = {
             sliderPosition = it.toInt().toFloat()
-            updateValues() //tämä kutsuu funtiota, joka laskee uudelleen kun arvot muuttuu
+            updateValues() //Recalculate when value changes
         },
         valueRange= 0f..50.0f,
-        steps = 49
+        steps = 49 //years between 0 and 50
     )
-}
+}}
 
 @Preview(showBackground = true)
 @Composable

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">SavingsCalculator: </string>
+    <string name="app_name">SijoitusLaskuri</string>
     <string name="initial_amount">Alku pääoma: </string>
     <string name="investment_years">Sijoitusaika (vuosina): </string>
     <string name="monthly_contribution">Kuukausisäästö: </string>
@@ -10,4 +10,5 @@
     <string name="final_value">Loppusumma: </string>
     <string name="investment_info">Säästöjen tiedot: </string>
     <string name="total_results">Tulokset: </string>
+    <string name="investment_calculator">Sijoitus laskuri</string>
 </resources>

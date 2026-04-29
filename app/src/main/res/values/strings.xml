@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Sijoituslaskuri</string>
+    <string name="app_name">SavingsCalculator</string>
     <string name="initial_amount">Initial investment: </string>
     <string name="investment_years">Investment period (years): </string>
     <string name="monthly_contribution">Monthly contribution: </string>
@@ -9,4 +9,5 @@
     <string name="final_value">Final value: </string>
     <string name="investment_info">Investment info: </string>
     <string name="total_results">Total results: </string>
+    <string name="investment_calculator">Investment calculator</string>
 </resources>
